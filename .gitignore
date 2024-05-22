@@ -12,6 +12,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-store*
 
+# Enviroment Variables
+.env
+
 # OS
 .DS_Store
 
