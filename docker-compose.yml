@@ -4,18 +4,18 @@ services:
   palets-api:
     user: root
     container_name: palets-api
+    working_dir: /app
     build: .
     ports:
       - '${PORT}:3000'
     volumes:
-      - .:/home/node/app
-    network_mode: host
+      - .:/app
+      - /app/node_modules
     depends_on:
       - db
 
   db:
     image: postgres:16.2
-    container_name: palets-db
     restart: unless-stopped
     tty: true
     ports:

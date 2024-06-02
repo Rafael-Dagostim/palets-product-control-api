@@ -1,15 +1,14 @@
-FROM node:latest
+FROM node:latest as base
 
-RUN npm i -g pnpm prisma 
-
-USER node
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true
+RUN corepack enable
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml package.json ./
-
-RUN pnpm i
-
 COPY . .
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 ENTRYPOINT [ ".docker/entrypoint.sh" ]

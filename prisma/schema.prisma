@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String   @unique() @db.VarChar(100)
+  document  String   @unique() @db.VarChar(20)
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  employeeRecords  ProductionRecord[] @relation("fk_production_employee")
+  ProductionRecord RecordHistory[]    @relation("fk_production_manager")
+
+  @@map("users")
+}
+
+model Palet {
+  id             String   @id @default(uuid())
+  name           String   @unique() @db.VarChar(100)
+  buyCost        Decimal  @map("buy_cost") @db.Money()
+  productionCost Decimal  @map("production_cost") @db.Money()
+  sellPrice      Decimal  @map("sell_price") @db.Money()
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  productionRecord ProductionRecord[] @relation("fk_production_palets")
+
+  @@map("palets")
+}
+
+model ProductionRecord {
+  id                String       @id @default(uuid())
+  employeeId        String       @map("employee_id")
+  paletId           String       @map("palet_id")
+  deliveredQuantity Int          @map("delivered_quantity")
+  reformedQuantity  Int          @map("reformed_quantity")
+  status            RecordStatus
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz()
+
+  employee User  @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
+  palet    Palet @relation(fields: [paletId], references: [id], name: "fk_production_palets")
+
+  @@map("production_records")
+}
+
+model RecordHistory {
+  id          String       @id @default(uuid())
+  managerId   String       @map("manager_id")
+  status      RecordStatus
+  observation String
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+
+  manager User @relation(fields: [managerId], references: [id], name: "fk_production_manager")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum RecordStatus {
+  OPEN
+  REFORMED
+  CANCELED
+  DONE
+}
