@@ -1,11 +1,11 @@
-version: '3'
+version: '3.8'
 services:
   #We can change service name later
   palets-api:
     user: root
     container_name: palets-api
     working_dir: /app
-    build: .
+    build: .''
     ports:
       - '${PORT}:3000'
     volumes:

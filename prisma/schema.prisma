@@ -21,16 +21,18 @@ model User {
   role      UserRole
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt DateTime @updatedAt @map("deleted_at") @db.Timestamptz()
 
   employeeRecords  ProductionRecord[] @relation("fk_production_employee")
-  ProductionRecord RecordHistory[]    @relation("fk_production_manager")
+  ProductionRecord RecordHistory[]    @relation("fk_history_user_changed")
 
   @@map("users")
 }
 
 model Palet {
   id             String   @id @default(uuid())
-  name           String   @unique() @db.VarChar(100)
+  name           String   @db.VarChar(100)
+  version        Int
   buyCost        Decimal  @map("buy_cost") @db.Money()
   productionCost Decimal  @map("production_cost") @db.Money()
   sellPrice      Decimal  @map("sell_price") @db.Money()
@@ -39,6 +41,7 @@ model Palet {
 
   productionRecord ProductionRecord[] @relation("fk_production_palets")
 
+  @@unique([name, version])
   @@map("palets")
 }
 
@@ -52,20 +55,25 @@ model ProductionRecord {
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz()
 
-  employee User  @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
-  palet    Palet @relation(fields: [paletId], references: [id], name: "fk_production_palets")
+  employee      User            @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
+  palet         Palet           @relation(fields: [paletId], references: [id], name: "fk_production_palets")
+  RecordHistory RecordHistory[] @relation("fk_history_production")
 
   @@map("production_records")
 }
 
 model RecordHistory {
   id          String       @id @default(uuid())
-  managerId   String       @map("manager_id")
+  recordId    String       @map("record_id")
+  changedById String       @map("user_id")
   status      RecordStatus
   observation String
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz()
 
-  manager User @relation(fields: [managerId], references: [id], name: "fk_production_manager")
+  record    ProductionRecord @relation(fields: [recordId], references: [id], name: "fk_history_production")
+  changedBy User             @relation(fields: [changedById], references: [id], name: "fk_history_user_changed")
+
+  @@map("record_histories")
 }
 
 enum UserRole {
@@ -78,5 +86,5 @@ enum RecordStatus {
   OPEN
   REFORMED
   CANCELED
-  DONE
+  PAYED
 }
