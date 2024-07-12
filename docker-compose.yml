@@ -1,16 +1,15 @@
-version: '3.8'
 services:
   #We can change service name later
   palets-api:
     user: root
     container_name: palets-api
     working_dir: /app
-    build: .''
+    network_mode: host
+    build: .
     ports:
       - '${PORT}:3000'
     volumes:
       - .:/app
-      - /app/node_modules
     depends_on:
       - db
 
@@ -18,8 +17,9 @@ services:
     image: postgres:16.2
     restart: unless-stopped
     tty: true
+    network_mode: host
     ports:
-      - '${DB_PORT}:5432'
+      - '${DB_PORT}:${DB_PORT}'
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
