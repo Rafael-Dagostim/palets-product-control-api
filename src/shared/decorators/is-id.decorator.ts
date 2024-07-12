@@ -1,3 +1,19 @@
-import { createParamDecorator } from '@nestjs/common';
+import { applyDecorators } from '@nestjs/common';
+import { Transform, Type } from 'class-transformer';
+import { IsInt, Min, IsOptional } from 'class-validator';
 
-export const IsId = createParamDecorator()
+interface IsIdOptions {
+  isOptional?: boolean;
+}
+
+export const IsId = (options?: IsIdOptions): PropertyDecorator => {
+  const decorators = [
+    Transform(({ value }) => (value ? value : undefined)),
+    Type(() => Number),
+    IsInt(),
+    Min(1),
+  ];
+  if (options?.isOptional) decorators.unshift(IsOptional());
+
+  return applyDecorators(...decorators);
+};

@@ -4,6 +4,7 @@ import { UserModule } from './modules/user/user.module';
 import { DatabaseModule } from './core/database/database.module';
 import { PaletsModule } from './modules/palets/palets.module';
 import { ProductionRecordModule } from './modules/production-record/production-record.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ProductionRecordModule } from './modules/production-record/production-r
     DatabaseModule,
     PaletsModule,
     ProductionRecordModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
