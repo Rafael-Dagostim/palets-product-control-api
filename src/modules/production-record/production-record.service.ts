@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/database/database.service';
+import { CreateProductionRecordDto } from './dto/create-production-record.dto';
+import { UpdateProductionRecordDto } from './dto/update-production-record.dto';
 
 @Injectable()
 export class ProductionRecordService {
-  constructor(private readonly prismaService: PrismaService) {}
-
-  create(dto: CreatePaletDto) {
-    return this.prismaService.palet.create({ data: dto });
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prismaService.palet.findMany();
+    return this.prisma.productionRecord.findMany();
   }
 
   findOne(id: string) {
-    return this.prismaService.palet.findUnique({ where: { id } });
+    return this.prisma.productionRecord.findUnique({ where: { id } });
   }
 
-  update(id: string, dto: UpdatePaletDto) {
-    return this.prismaService.palet.update({ where: { id }, data: dto });
+  create(dto: CreateProductionRecordDto) {
+    return this.prisma.productionRecord.create({ data: dto });
+  }
+
+  update(id: string, dto: UpdateProductionRecordDto) {
+    return this.prisma.productionRecord.update({ where: { id }, data: dto });
   }
 
   remove(id: string) {
-    return this.prismaService.palet.delete({ where: { id } });
+    return this.prisma.productionRecord.delete({ where: { id } });
   }
 }

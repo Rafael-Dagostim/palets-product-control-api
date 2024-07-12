@@ -7,11 +7,6 @@ import { UpdateProductionRecordDto } from './dto/update-production-record.dto';
 export class ProductionRecordController {
   constructor(private readonly productionRecordService: ProductionRecordService) {}
 
-  @Post()
-  create(@Body() createProductionRecordDto: CreateProductionRecordDto) {
-    return this.productionRecordService.create(createProductionRecordDto);
-  }
-
   @Get()
   findAll() {
     return this.productionRecordService.findAll();
@@ -19,16 +14,21 @@ export class ProductionRecordController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productionRecordService.findOne(+id);
+    return this.productionRecordService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() createProductionRecordDto: CreateProductionRecordDto) {
+    return this.productionRecordService.create(createProductionRecordDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductionRecordDto: UpdateProductionRecordDto) {
-    return this.productionRecordService.update(+id, updateProductionRecordDto);
+  update(@Param('id') id: string, @Body() dto: UpdateProductionRecordDto) {
+    return this.productionRecordService.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productionRecordService.remove(+id);
+    return this.productionRecordService.remove(id);
   }
 }

@@ -5,25 +5,25 @@ import { PrismaService } from 'src/core/database/database.service';
 
 @Injectable()
 export class PaletsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   create(dto: CreatePaletDto) {
-    return this.prismaService.palet.create({ data: dto });
+    return this.prisma.palet.create({ data: dto });
   }
 
   findAll() {
-    return this.prismaService.palet.findMany();
+    return this.prisma.palet.findMany();
   }
 
   findOne(id: string) {
-    return this.prismaService.palet.findUnique({ where: { id } });
+    return this.prisma.palet.findUnique({ where: { id } });
   }
 
   update(id: string, dto: UpdatePaletDto) {
-    return this.prismaService.palet.update({ where: { id }, data: dto });
+    return this.prisma.palet.update({ where: { id }, data: dto });
   }
 
   remove(id: string) {
-    return this.prismaService.palet.delete({ where: { id } });
+    return this.prisma.palet.delete({ where: { id } });
   }
 }
