@@ -30,7 +30,7 @@ model User {
   @@map("users")
 }
 
-model Palet {
+model Pallet {
   id             String   @id @default(uuid())
   name           String   @db.VarChar(100)
   version        Int
@@ -40,25 +40,26 @@ model Palet {
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 
-  productionRecord ProductionRecord[] @relation("fk_production_palets")
+  productionRecord ProductionRecord[] @relation("fk_production_pallets")
+  orders           PalletOrderItem[]  @relation("fk_order_item_pallet")
 
   @@unique([name, version])
-  @@map("palets")
+  @@map("pallets")
 }
 
 model ProductionRecord {
   id                String       @id @default(uuid())
   employeeId        String       @map("employee_id")
-  paletId           String       @map("palet_id")
+  palletId          String       @map("pallet_id")
   deliveredQuantity Int          @map("delivered_quantity")
   reformedQuantity  Int          @map("reformed_quantity")
   status            RecordStatus
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz()
   updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz()
 
-  employee      User            @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
-  palet         Palet           @relation(fields: [paletId], references: [id], name: "fk_production_palets")
-  RecordHistory RecordHistory[] @relation("fk_history_production")
+  employee User            @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
+  pallet   Pallet          @relation(fields: [palletId], references: [id], name: "fk_production_pallets")
+  history  RecordHistory[] @relation("fk_history_production")
 
   @@map("production_records")
 }
@@ -68,13 +69,54 @@ model RecordHistory {
   recordId    String       @map("record_id")
   changedById String       @map("user_id")
   status      RecordStatus
-  observation String
+  observation String?
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz()
 
   record    ProductionRecord @relation(fields: [recordId], references: [id], name: "fk_history_production")
   changedBy User             @relation(fields: [changedById], references: [id], name: "fk_history_user_changed")
 
   @@map("record_histories")
+}
+
+model PalletOrder {
+  id         String            @id @default(uuid())
+  customerId String            @map("customer_id")
+  status     PalletOrderStatus
+  deadline   DateTime          @db.Date()
+  updatedAt  DateTime          @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+
+  customer Customer          @relation(fields: [customerId], references: [id], name: "fk_order_customer")
+  items    PalletOrderItem[] @relation("fk_order_items")
+
+  @@map("pallet_orders")
+}
+
+model PalletOrderItem {
+  id                String   @id @default(uuid())
+  palletOrderId     String   @map("pallet_order_id")
+  palletId          String   @map("pallet_id")
+  quantityRequested Int      @map("quantity_requested")
+  quantityProduced  Int      @map("quantity_produced ")
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  pallet Pallet      @relation(fields: [palletId], references: [id], name: "fk_order_item_pallet")
+  order  PalletOrder @relation(fields: [palletOrderId], references: [id], name: "fk_order_items")
+
+  @@map("pallet_order_items")
+}
+
+model Customer {
+  id            String   @id @default(uuid())
+  businessName  String   @map("business_name")
+  corporateName String?  @map("corporate_name")
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  orders PalletOrder[] @relation(name: "fk_order_customer")
+
+  @@map("customers")
 }
 
 enum UserRole {
@@ -88,4 +130,11 @@ enum RecordStatus {
   REFORMED
   CANCELED
   PAYED
+}
+
+enum PalletOrderStatus {
+  OPEN
+  IN_PRODUCTION
+  DONE
+  CANCELED
 }

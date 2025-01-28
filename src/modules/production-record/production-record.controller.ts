@@ -18,8 +18,8 @@ export class ProductionRecordController {
   }
 
   @Post()
-  create(@Body() createProductionRecordDto: CreateProductionRecordDto) {
-    return this.productionRecordService.create(createProductionRecordDto);
+  create(@Body() dto: CreateProductionRecordDto) {
+    return this.productionRecordService.create(dto);
   }
 
   @Patch(':id')

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/core/database/database.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  create(dto: CreateUserDto) {
+  async create(dto: UserEntity) {
     return this.prisma.user.create({ data: dto });
   }
 

@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { compare, hash } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
 import { PrismaService } from 'src/core/database/database.service';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtContent } from './types/jwt-content.type';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
     config: ConfigService,
   ) {
     this.passwordPepper = config.getOrThrow('PWD_PEPPER');
@@ -39,5 +42,15 @@ export class AuthService {
       token: this.jwtService.sign(jwtContent),
       refresh: this.jwtService.sign(jwtContent, { expiresIn: '7d' }),
     };
+  }
+
+  async register(dto: RegisterUserDto): Promise<void> {
+    const salt = await genSalt(14);
+
+    const hashPassword = await hash(dto.password, `${salt}${this.passwordPepper}`);
+
+    const user = new UserEntity({ ...dto, password: hashPassword, salt });
+
+    await this.userService.create(user);
   }
 }

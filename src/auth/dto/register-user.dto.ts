@@ -1,7 +1,7 @@
 import { $Enums } from '@prisma/client';
 import { IsEnum, IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class RegisterUserDto {
   @IsString()
   name: string;
 
