@@ -1,11 +1,11 @@
 import { $Enums, ProductionRecord } from '@prisma/client';
-import { PaletEntity } from 'src/modules/palets/entities/palet.entity';
+import { PalletEntity } from 'src/modules/pallets/entities/pallet.entity';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 
 export class ProductionRecordEntity implements ProductionRecord {
   id: string;
   employeeId: string;
-  paletId: string;
+  palletId: string;
   deliveredQuantity: number;
   reformedQuantity: number;
   status: $Enums.RecordStatus;
@@ -13,12 +13,12 @@ export class ProductionRecordEntity implements ProductionRecord {
   updatedAt: Date;
 
   employee: UserEntity;
-  palet: PaletEntity;
+  pallet: PalletEntity;
 
   constructor(partial: Partial<ProductionRecordEntity>) {
     const employee = partial.employee && new UserEntity(partial.employee);
-    const palet = partial.palet && new PaletEntity(partial.palet);
+    const pallet = partial.pallet && new PalletEntity(partial.pallet);
 
-    Object.assign(this, { ...partial, employee, palet });
+    Object.assign(this, { ...partial, employee, pallet });
   }
 }

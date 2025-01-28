@@ -2,8 +2,7 @@ import { $Enums } from '@prisma/client';
 
 export class CreateProductionRecordDto {
   employeeId: string;
-  paletId: string;
+  palletId: string;
   deliveredQuantity: number;
   reformedQuantity: number;
-  status: $Enums.RecordStatus;
 }

@@ -1,8 +1,8 @@
 services:
   #We can change service name later
-  palets-api:
+  pallets-api:
     user: root
-    container_name: palets-api
+    container_name: pallets-api
     working_dir: /app
     network_mode: host
     build: .

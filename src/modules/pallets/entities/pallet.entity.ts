@@ -1,7 +1,7 @@
-import { Palet } from '@prisma/client';
+import { Pallet } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export class PaletEntity implements Palet {
+export class PalletEntity implements Pallet {
   id: string;
   name: string;
   version: number;
@@ -11,7 +11,7 @@ export class PaletEntity implements Palet {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(partial: Partial<PaletEntity>) {
+  constructor(partial: Partial<PalletEntity>) {
     Object.assign(this, partial);
   }
 }
