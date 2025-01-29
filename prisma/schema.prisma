@@ -14,15 +14,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   @unique() @db.VarChar(100)
-  document  String   @unique() @db.VarChar(20)
+  id        String       @id @default(uuid())
+  name      String       @unique() @db.VarChar(100)
+  document  String       @unique() @db.VarChar(20)
   password  String
   salt      String
-  role      UserRole
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
-  deletedAt DateTime @updatedAt @map("deleted_at") @db.Timestamptz()
+  role      UserRoleEnum
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt DateTime     @updatedAt @map("deleted_at") @db.Timestamptz()
 
   employeeRecords  ProductionRecord[] @relation("fk_production_employee")
   ProductionRecord RecordHistory[]    @relation("fk_history_user_changed")
@@ -48,14 +48,14 @@ model Pallet {
 }
 
 model ProductionRecord {
-  id                String       @id @default(uuid())
-  employeeId        String       @map("employee_id")
-  palletId          String       @map("pallet_id")
-  deliveredQuantity Int          @map("delivered_quantity")
-  reformedQuantity  Int          @map("reformed_quantity")
-  status            RecordStatus
-  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz()
-  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz()
+  id                String           @id @default(uuid())
+  employeeId        String           @map("employee_id")
+  palletId          String           @map("pallet_id")
+  deliveredQuantity Int              @map("delivered_quantity")
+  reformedQuantity  Int              @map("reformed_quantity")
+  status            RecordStatusEnum
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz()
 
   employee User            @relation(fields: [employeeId], references: [id], name: "fk_production_employee")
   pallet   Pallet          @relation(fields: [palletId], references: [id], name: "fk_production_pallets")
@@ -65,12 +65,12 @@ model ProductionRecord {
 }
 
 model RecordHistory {
-  id          String       @id @default(uuid())
-  recordId    String       @map("record_id")
-  changedById String       @map("user_id")
-  status      RecordStatus
+  id          String           @id @default(uuid())
+  recordId    String           @map("record_id")
+  changedById String           @map("user_id")
+  status      RecordStatusEnum
   observation String?
-  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz()
 
   record    ProductionRecord @relation(fields: [recordId], references: [id], name: "fk_history_production")
   changedBy User             @relation(fields: [changedById], references: [id], name: "fk_history_user_changed")
@@ -79,12 +79,12 @@ model RecordHistory {
 }
 
 model PalletOrder {
-  id         String            @id @default(uuid())
-  customerId String            @map("customer_id")
-  status     PalletOrderStatus
-  deadline   DateTime          @db.Date()
-  updatedAt  DateTime          @updatedAt @map("updated_at") @db.Timestamptz()
-  createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz()
+  id         String                @id @default(uuid())
+  customerId String                @map("customer_id")
+  status     PalletOrderStatusEnum
+  deadline   DateTime              @db.Date()
+  updatedAt  DateTime              @updatedAt @map("updated_at") @db.Timestamptz()
+  createdAt  DateTime              @default(now()) @map("created_at") @db.Timestamptz()
 
   customer Customer          @relation(fields: [customerId], references: [id], name: "fk_order_customer")
   items    PalletOrderItem[] @relation("fk_order_items")
@@ -119,22 +119,28 @@ model Customer {
   @@map("customers")
 }
 
-enum UserRole {
+enum UserRoleEnum {
   ADMIN
   MANAGER
   EMPLOYEE
+
+  @@map("UserRole")
 }
 
-enum RecordStatus {
+enum RecordStatusEnum {
   OPEN
   REFORMED
   CANCELED
   PAYED
+
+  @@map("RecordStatus")
 }
 
-enum PalletOrderStatus {
+enum PalletOrderStatusEnum {
   OPEN
   IN_PRODUCTION
   DONE
   CANCELED
+
+  @@map("PalletOrderStatus")
 }
