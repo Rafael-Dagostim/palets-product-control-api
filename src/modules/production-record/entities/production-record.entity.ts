@@ -1,4 +1,4 @@
-import { $Enums, ProductionRecord } from '@prisma/client';
+import { ProductionRecord, RecordStatusEnum } from '@prisma/client';
 import { PalletEntity } from 'src/modules/pallets/entities/pallet.entity';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 
@@ -8,7 +8,7 @@ export class ProductionRecordEntity implements ProductionRecord {
   palletId: string;
   deliveredQuantity: number;
   reformedQuantity: number;
-  status: $Enums.RecordStatus;
+  status: RecordStatusEnum;
   createdAt: Date;
   updatedAt: Date;
 

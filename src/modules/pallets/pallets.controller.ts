@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PalletsService } from './pallets.service';
 import { CreatePalletDto } from './dto/create-pallet.dto';
 import { UpdatePalletDto } from './dto/update-pallet.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('pallets')
+@ApiBearerAuth()
 export class PalletsController {
   constructor(private readonly palletsService: PalletsService) {}
 

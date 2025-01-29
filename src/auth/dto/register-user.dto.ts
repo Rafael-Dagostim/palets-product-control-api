@@ -1,5 +1,6 @@
-import { $Enums } from '@prisma/client';
+import { UserRoleEnum } from '@prisma/client';
 import { IsEnum, IsString } from 'class-validator';
+import { IsPrismaEnum } from 'src/shared/decorators';
 
 export class RegisterUserDto {
   @IsString()
@@ -11,6 +12,6 @@ export class RegisterUserDto {
   @IsString()
   password: string;
 
-  @IsEnum($Enums.UserRole)
-  role: $Enums.UserRole;
+  @IsPrismaEnum(UserRoleEnum)
+  role: UserRoleEnum;
 }

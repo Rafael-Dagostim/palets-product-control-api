@@ -2,8 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductionRecordService } from './production-record.service';
 import { CreateProductionRecordDto } from './dto/create-production-record.dto';
 import { UpdateProductionRecordDto } from './dto/update-production-record.dto';
+import { User } from 'src/shared/decorators';
+import { JwtUserData } from 'src/auth/types/jwt-user-data.type';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('production-record')
+@ApiBearerAuth()
 export class ProductionRecordController {
   constructor(private readonly productionRecordService: ProductionRecordService) {}
 
@@ -18,13 +22,17 @@ export class ProductionRecordController {
   }
 
   @Post()
-  create(@Body() dto: CreateProductionRecordDto) {
-    return this.productionRecordService.create(dto);
+  create(@Body() dto: CreateProductionRecordDto, @User() user: JwtUserData) {
+    return this.productionRecordService.create(dto, user);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateProductionRecordDto) {
-    return this.productionRecordService.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductionRecordDto,
+    @User() user: JwtUserData,
+  ) {
+    return this.productionRecordService.update(id, dto, user);
   }
 
   @Delete(':id')

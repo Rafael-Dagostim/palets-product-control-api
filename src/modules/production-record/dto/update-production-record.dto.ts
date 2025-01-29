@@ -1,8 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { RecordStatusEnum } from '@prisma/client';
 import { CreateProductionRecordDto } from './create-production-record.dto';
-import { $Enums } from '@prisma/client';
+import { IsPrismaEnum } from 'src/shared/decorators';
+import { PartialType } from '@nestjs/swagger';
 
 export class UpdateProductionRecordDto extends PartialType(CreateProductionRecordDto) {
-  status?: $Enums.RecordStatus;
+  /** Novo status da produção */
+  @IsPrismaEnum(RecordStatusEnum)
+  status?: RecordStatusEnum;
+  /** Teste */
   observation?: string;
 }

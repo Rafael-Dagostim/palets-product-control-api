@@ -4,6 +4,6 @@ import { ProductionRecordController } from './production-record.controller';
 
 @Module({
   controllers: [ProductionRecordController],
-  providers: [ProductionRecordService]
+  providers: [ProductionRecordService],
 })
 export class ProductionRecordModule {}

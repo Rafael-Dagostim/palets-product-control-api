@@ -6,9 +6,10 @@ import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtContent } from './types/jwt-content.type';
+import { JwtUserData } from './types/jwt-user-data.type';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UserService } from 'src/modules/user/user.service';
+import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
 
     if (!passwordMatch) throw new NotFoundException(null, 'Usuário ou senha incorretos!');
 
-    const jwtContent: JwtContent = {
+    const jwtContent: JwtUserData = {
       userId: user.id,
       role: user.role,
     };
@@ -49,7 +50,7 @@ export class AuthService {
 
     const hashPassword = await hash(dto.password, `${salt}${this.passwordPepper}`);
 
-    const user = new UserEntity({ ...dto, password: hashPassword, salt });
+    const user: CreateUserDto = { ...dto, password: hashPassword, salt };
 
     await this.userService.create(user);
   }
